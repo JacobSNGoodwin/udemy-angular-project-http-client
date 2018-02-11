@@ -21,22 +21,45 @@ export class DataStorageService {
   getRecipes() {
     const token = this.authService.getToken();
 
-    this.httpClient.get<Recipe[]>('https://ng-recipe-book-1a4ce.firebaseio.com/recipes.json?auth=' + token)
-      .map(
-        (recipes) => {
-          for (let recipe of recipes) {
-            if (!recipe['ingredients']){
-              //console.log(recipe);
-              recipe['ingredients']=[];
+    // this.httpClient.get<Recipe[]>('https://ng-recipe-book-1a4ce.firebaseio.com/recipes.json?auth=' + token)
+    //   .map(
+    //     (recipes) => {
+    //       for (let recipe of recipes) {
+    //         if (!recipe['ingredients']){
+    //           //console.log(recipe);
+    //           recipe['ingredients']=[];
+    //         }
+    //       }
+    //       return recipes;
+    //     }
+    //   )
+    //   .subscribe(
+    //     (recipes: Recipe[]) => {
+    //       this.recipeService.setRecipes(recipes);
+    //     }
+    //   );
+
+      this.httpClient.get<Recipe[]>('https://ng-recipe-book-1a4ce.firebaseio.com/recipes.json?auth=' + token, {
+        observe: 'body',
+        responseType: 'json'
+      })
+        .map(
+          (recipes) => {
+            console.log(recipes);
+            for (let recipe of recipes) {
+              if (!recipe['ingredients']){
+                //console.log(recipe);
+                recipe['ingredients']=[];
+              }
             }
+            return recipes;
+
           }
-          return recipes;
-        }
-      )
-      .subscribe(
-        (recipes: Recipe[]) => {
-          this.recipeService.setRecipes(recipes);
-        }
-      );
+        )
+        .subscribe(
+          (recipes: Recipe[]) => {
+            this.recipeService.setRecipes(recipes);
+          }
+        );
   }
 }
